@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Feature Values</h1>
+        <form id="prediction-form">
+            <div class="input-group">
+                <label for="feature1">Feature 1:</label>
+                <input type="number" step="any" id="feature1" name="feature1" required>
+            </div>
+            <div class="input-group">
+                <label for="feature2">Feature 2:</label>
+                <input type="number" step="any" id="feature2" name="feature2" required>
+            </div>
+            <div class="input-group">
+                <label for="feature3">Feature 3:</label>
+                <input type="number" step="any" id="feature3" name="feature3" required>
+            </div>
+            <div class="input-group">
+                <label for="feature4">Feature 4:</label>
+                <input type="number" step="any" id="feature4" name="feature4" required>
+            </div>
+            <div class="input-group">
+                <label for="feature5">Feature 5:</label>
+                <input type="number" step="any" id="feature5" name="feature5" required>
+            </div>
+            <div class="input-group">
+                <label for="feature6">Feature 6:</label>
+                <input type="number" step="any" id="feature6" name="feature6" required>
+            </div>
+            <button type="submit">Get Prediction</button>
+        </form>
+        <h3 id="prediction-result"></h3>
+    </div>
+
+    <script>
+        document.getElementById('prediction-form').addEventListener('submit', function(e) {
+            e.preventDefault();  // Prevent form from submitting normally
+
+            // Gather the input data
+            const features = [];
+            for (let i = 1; i <= 6; i++) {
+                features.push(parseFloat(document.getElementById('feature' + i).value));
+            }
+
+            // Send the data to the server using fetch (AJAX)
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ features: features })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.prediction) {
+                    document.getElementById('prediction-result').textContent = `Prediction: ${data.prediction}`;
+                } else if (data.error) {
+                    document.getElementById('prediction-result').textContent = `Error: ${data.error}`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('prediction-result').textContent = 'An error occurred';
+            });
+        });
+    </script>
+</body>
+</html>
