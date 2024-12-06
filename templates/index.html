@@ -3,12 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Prediction</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>AI Model Prediction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ff7f50, #6a5acd);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 1s ease;
+        }
+
+        h1 {
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: #ff6f61;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #ff7f50;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #6a5acd;
+        }
+
+        button {
+            background: #ff6f61;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background: #ff4500;
+            transform: translateY(-2px);
+        }
+
+        #prediction-result {
+            margin-top: 2rem;
+            font-weight: 500;
+            font-size: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .authorized {
+            color: #32cd32; /* Green color for "Authorized user" */
+        }
+
+        .unauthorized {
+            color: #ff0000; /* Red color for "Unauthorized user" */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            input {
+                font-size: 0.95rem;
+            }
+
+            button {
+                padding: 0.7rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Enter Feature Values</h1>
+        <h1>Continuous user authentication Prediction By using System Navigation Data</h1>
         <form id="prediction-form">
             <div class="input-group">
                 <label for="feature1">Feature 1:</label>
@@ -41,7 +163,7 @@
 
     <script>
         document.getElementById('prediction-form').addEventListener('submit', function(e) {
-            e.preventDefault();  // Prevent form from submitting normally
+            e.preventDefault();
 
             // Gather the input data
             const features = [];
@@ -59,14 +181,19 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.prediction) {
-                    document.getElementById('prediction-result').textContent = `Prediction: ${data.prediction}`;
+                if (data.status) {
+                    const resultElement = document.getElementById('prediction-result');
+                    resultElement.textContent = `Status: ${data.status} (Prediction Value: ${data.prediction.toFixed(2)})`;
+                    resultElement.className = data.status === 'Authorized user' ? 'authorized' : 'unauthorized';
                 } else if (data.error) {
                     document.getElementById('prediction-result').textContent = `Error: ${data.error}`;
+                    document.getElementById('prediction-result').className = '';
                 }
             })
             .catch(error => {
-                document.getElementById('prediction-result').textContent = 'An error occurred';
+                document.getElementById('prediction-result').textContent = 'An error occurred while fetching the prediction.';
+                document.getElementById('prediction-result').className = '';
+                console.error('Error:', error);
             });
         });
     </script>
